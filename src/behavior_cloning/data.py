@@ -10,8 +10,13 @@ import cv2
 import numpy as np
 
 
-def copy(old_path: Path, new_path: Path, log="driving_log.csv", img_dir="IMG",
-         max_lines=math.inf):
+def copy(
+    old_path: Path,
+    new_path: Path,
+    log="driving_log.csv",
+    img_dir="IMG",
+    max_lines=math.inf,
+):
     dirs = os.listdir(old_path)
     assert log in dirs
     assert img_dir in dirs
@@ -57,7 +62,8 @@ def read(path: Path, log="driving_log.csv", img_dir="IMG") -> List[TrainingData]
                             throttle=float(line[-3]),
                             brake=float(line[-2]),
                             speed=float(line[-1]),
-                            image=img)
+                            image=img,
+                        )
                     )
     return training_data
 
