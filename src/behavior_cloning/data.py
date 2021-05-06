@@ -4,7 +4,7 @@ import os
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 import cv2
 import numpy as np
@@ -60,3 +60,9 @@ def read(path: Path, log="driving_log.csv", img_dir="IMG") -> List[TrainingData]
                             image=img)
                     )
     return training_data
+
+
+def convert(training_data: List[TrainingData]) -> Tuple[np.array, np.array]:
+    X_train = np.array([x.image for x in training_data])
+    y_train = np.array([x.steering_angle for x in training_data])
+    return X_train, y_train

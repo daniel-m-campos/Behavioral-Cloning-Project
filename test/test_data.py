@@ -30,3 +30,9 @@ def test_read(resource_path):
     assert training_data[0].brake == 0
     assert training_data[0].speed == 7.997358e-05
     assert training_data[0].image.shape == (160, 320, 3)
+
+
+def test_convert(resource_path):
+    X_train, y_train = data.convert(data.read(resource_path))
+    assert X_train.shape == (36, 160, 320, 3)
+    assert y_train.shape == (36,)
