@@ -1,0 +1,11 @@
+opencv-python
+requests
+tensorflow==2.3.2
+keras
+flask
+flask-socketio
+eventlet
+h5py
+pillow
+moviepy
+numpy
