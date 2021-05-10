@@ -26,6 +26,7 @@ dependencies:
         - moviepy
         - opencv-python
         - requests
-        - black
-        - pytest
         - dataclasses
+        - pytest
+        - black
+        - pre-commit
