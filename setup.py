@@ -12,5 +12,5 @@ setup(
     package_dir={"": "src"},
     packages=find_packages("src"),
     install_requires=requirements_file.read().strip().split("\n"),
-    extras_require=test_requirements_file.read().strip().split("\n"),
+    extras_require={"": test_requirements_file.read().strip().split("\n")},
 )
