@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-requirements_file = open("test_requirements.txt")
+requirements_file = open("requirements.txt")
 test_requirements_file = open("test_requirements.txt")
 
 setup(
@@ -12,5 +12,5 @@ setup(
     package_dir={"": "src"},
     packages=find_packages("src"),
     install_requires=requirements_file.read().strip().split("\n"),
-    extras_require=test_requirements_file.read().strip().split("\n"),
+    extras_require={"": test_requirements_file.read().strip().split("\n")},
 )
