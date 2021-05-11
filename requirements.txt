@@ -18,3 +18,6 @@ moviepy
 opencv-python
 requests
 dataclasses
+black
+pre-commit
+pytest
