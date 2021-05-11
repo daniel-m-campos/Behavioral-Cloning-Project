@@ -45,7 +45,11 @@ class TrainingData:
     image: np.array((160, 320, 3))
 
 
-def read(path: Path, log="driving_log.csv", img_dir="IMG") -> List[TrainingData]:
+
+def read(
+    path: Path, log="driving_log.csv", img_dir="IMG", side=None
+) -> List[TrainingData]:
+    side = side if side is not None else ""
     log_path = path / log
     training_data = []
     with open(log_path, "r") as file:
@@ -54,7 +58,7 @@ def read(path: Path, log="driving_log.csv", img_dir="IMG") -> List[TrainingData]
             for img in line[:3]:
                 img_path = Path(img)
                 img = cv2.imread(str(path / img_dir / img_path.name))
-                if img is not None:
+                if img is not None and side in img_path.name:
                     training_data.append(
                         TrainingData(
                             name=img_path.name,
