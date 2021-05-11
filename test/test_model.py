@@ -13,9 +13,8 @@ def resource_path() -> Path:
 
 
 def test_train(resource_path):
-    model = mdl.train(*data.convert(data.read(resource_path)))
-    for layer in model.layers[1:]:
-        assert len(layer.get_weights()) > 0
+    model = mdl.train(*data.convert(data.read(resource_path)), epochs=0)
+    assert len(model.layers[-1].get_weights()) > 0
 
 
 def test_predict(resource_path):
