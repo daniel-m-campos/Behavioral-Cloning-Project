@@ -43,9 +43,9 @@ def test_convert(training_data):
     assert y.shape == (36,)
 
 
-def test_augment(training_data):
+def test_add_horizontally_flipped(training_data):
     x, y = data.convert(training_data)
-    new_x, new_y = data.augment(x, y)
+    new_x, new_y = data.add_horizontally_flipped(x, y)
     assert new_x.shape[0] == 2 * x.shape[0]
     assert new_y.shape[0] == 2 * y.shape[0]
     assert np.allclose(new_x[: x.shape[0]], x)

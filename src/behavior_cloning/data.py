@@ -74,7 +74,7 @@ def convert(training_data: List[TrainingData]) -> Tuple[np.array, np.array]:
     return x_train, y_train
 
 
-def augment(x: np.array, y: np.array) -> Tuple[np.array, np.array]:
+def add_horizontally_flipped(x: np.array, y: np.array) -> Tuple[np.array, np.array]:
     flipped_x = x[:, :, ::-1, :]
     flipped_y = -y.copy()
     return np.concatenate([x, flipped_x]), np.concatenate([y, flipped_y])
