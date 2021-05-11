@@ -1,4 +1,5 @@
 import os
+from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
@@ -62,3 +63,23 @@ def test_add_horizontally_flipped(training_data):
         plt.show()
     except ImportError:
         pass
+
+
+def test_get_timestamp():
+    timestamp = "2021_05_06_12_33_46_793"
+    train_data = data.TrainingData(f"center_{timestamp}.jpg", 0, 0, 0, 0, None)
+    assert train_data.get_timestamp() == timestamp
+
+
+def test_shift_non_center_angles(training_data):
+    shift = 0.5
+    data.shift_non_center_angles(training_data, shift)
+    img_by_timestamp = defaultdict(dict)
+    for x in training_data:
+        img_by_timestamp[x.get_timestamp()][x.name] = x
+    for timestamp, timestamp_images in img_by_timestamp.items():
+        center_angle = timestamp_images[f"center_{timestamp}.jpg"].steering_angle
+        left_angle = timestamp_images[f"left_{timestamp}.jpg"].steering_angle
+        right_angle = timestamp_images[f"right_{timestamp}.jpg"].steering_angle
+        assert left_angle == pytest.approx(center_angle + shift, 1e-6)
+        assert right_angle == pytest.approx(center_angle - shift, 1e-6)

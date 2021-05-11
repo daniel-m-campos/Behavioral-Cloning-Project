@@ -44,6 +44,8 @@ class TrainingData:
     speed: float
     image: np.array((160, 320, 3))
 
+    def get_timestamp(self):
+        return "_".join(self.name.replace(".jpg", "").split("_")[1:])
 
 
 def read(
@@ -72,6 +74,18 @@ def read(
     return training_data
 
 
+def shift_non_center_angles(training_data: List[TrainingData], shift: float):
+    for train_data in training_data:
+        if "center" in train_data.name:
+            continue
+        elif "right" in train_data.name:
+            train_data.steering_angle -= shift
+        elif "left" in train_data.name:
+            train_data.steering_angle += shift
+        else:
+            raise ValueError("Name should be either left, center, or right")
+
+
 def convert(training_data: List[TrainingData]) -> Tuple[np.array, np.array]:
     x_train = np.array([x.image for x in training_data])
     y_train = np.array([x.steering_angle for x in training_data])
@@ -84,5 +98,8 @@ def add_horizontally_flipped(x: np.array, y: np.array) -> Tuple[np.array, np.arr
     return np.concatenate([x, flipped_x]), np.concatenate([y, flipped_y])
 
 
-def get_training_data(path: Path):
-    return augment(*convert(read(path)))
+def get_training_data(path: Path, side=None, shift=None):
+    training_data = read(path, side=side)
+    if isinstance(shift, float):
+        shift_non_center_angles(training_data, shift)
+    return add_horizontally_flipped(*convert(training_data))

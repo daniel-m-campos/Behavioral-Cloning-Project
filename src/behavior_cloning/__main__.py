@@ -5,7 +5,7 @@ from model import train
 
 
 def main(path: Path):
-    model = train(*get_training_data(path))
+    model = train(*get_training_data(path, shift=0.1))
     model.save(path / "model.h5")
 
 
