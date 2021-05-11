@@ -13,7 +13,9 @@ def create() -> keras.Model:
     return model
 
 
-def train(x: np.array, y: np.array) -> keras.Model:
+def train(
+    x: np.array, y: np.array, epochs=10, validation_split=0.2, shuffle=True
+) -> keras.Model:
     model = create()
-    model.fit(x, y, epochs=10, validation_split=0.2, shuffle=True)
+    model.fit(x, y, epochs=epochs, validation_split=validation_split, shuffle=shuffle)
     return model
