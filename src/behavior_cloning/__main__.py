@@ -1,11 +1,11 @@
 from pathlib import Path
 
-from data import read, convert
+from data import get_training_data
 from model import train
 
 
 def main(path: Path):
-    model = train(*convert(read(path)))
+    model = train(*get_training_data(path))
     model.save(path / "model.h5")
 
 

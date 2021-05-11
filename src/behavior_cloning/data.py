@@ -69,6 +69,16 @@ def read(path: Path, log="driving_log.csv", img_dir="IMG") -> List[TrainingData]
 
 
 def convert(training_data: List[TrainingData]) -> Tuple[np.array, np.array]:
-    X_train = np.array([x.image for x in training_data])
+    x_train = np.array([x.image for x in training_data])
     y_train = np.array([x.steering_angle for x in training_data])
-    return X_train, y_train
+    return x_train, y_train
+
+
+def augment(x: np.array, y: np.array) -> Tuple[np.array, np.array]:
+    flipped_x = x[:, :, ::-1, :]
+    flipped_y = -y.copy()
+    return np.concatenate([x, flipped_x]), np.concatenate([y, flipped_y])
+
+
+def get_training_data(path: Path):
+    return augment(*convert(read(path)))
