@@ -53,3 +53,12 @@ def test_augment(training_data):
     assert new_y[x.shape[0]] == -y[0]
     assert np.allclose(new_x[-1], x[-1, :, ::-1, :])
     assert new_y[-1] == -y[-1]
+    try:
+        import matplotlib.pyplot as plt
+
+        fig, axes = plt.subplots(2, 1)
+        axes[0].imshow(x[0])
+        axes[1].imshow(new_x[x.shape[0]])
+        plt.show()
+    except ImportError:
+        pass
