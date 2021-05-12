@@ -1,13 +1,16 @@
 import csv
 import math
 import os
+import random
 import shutil
-from dataclasses import dataclass
+from collections import deque
+from itertools import islice
 from pathlib import Path
-from typing import List, Tuple
+from typing import Tuple, Generator, List, Any
 
 import cv2
 import numpy as np
+from dataclasses import dataclass
 
 
 def copy(
@@ -50,10 +53,9 @@ class TrainingData:
 
 def read(
     path: Path, log="driving_log.csv", img_dir="IMG", side=None
-) -> List[TrainingData]:
+) -> Generator[TrainingData, None, None]:
     side = side if side is not None else ""
     log_path = path / log
-    training_data = []
     with open(log_path, "r") as file:
         reader = csv.reader(file)
         for line in reader:
@@ -61,32 +63,30 @@ def read(
                 img_path = Path(img)
                 img = cv2.imread(str(path / img_dir / img_path.name))
                 if img is not None and side in img_path.name:
-                    training_data.append(
-                        TrainingData(
-                            name=img_path.name,
-                            steering_angle=float(line[-4]),
-                            throttle=float(line[-3]),
-                            brake=float(line[-2]),
-                            speed=float(line[-1]),
-                            image=img,
-                        )
+                    yield TrainingData(
+                        name=img_path.name,
+                        steering_angle=float(line[-4]),
+                        throttle=float(line[-3]),
+                        brake=float(line[-2]),
+                        speed=float(line[-1]),
+                        image=img,
                     )
-    return training_data
 
 
-def shift_non_center_angles(training_data: List[TrainingData], shift: float):
+def shift_non_center_angles(
+    training_data: Generator[TrainingData, None, None], shift: float
+) -> Generator[TrainingData, None, None]:
     for train_data in training_data:
-        if "center" in train_data.name:
-            continue
-        elif "right" in train_data.name:
+        if "right" in train_data.name:
             train_data.steering_angle -= shift
         elif "left" in train_data.name:
             train_data.steering_angle += shift
-        else:
-            raise ValueError("Name should be either left, center, or right")
+        yield train_data
 
 
-def convert(training_data: List[TrainingData]) -> Tuple[np.array, np.array]:
+def convert(
+    training_data: List[TrainingData],
+) -> Tuple[np.array, np.array]:
     x_train = np.array([x.image for x in training_data])
     y_train = np.array([x.steering_angle for x in training_data])
     return x_train, y_train
@@ -98,8 +98,74 @@ def add_horizontally_flipped(x: np.array, y: np.array) -> Tuple[np.array, np.arr
     return np.concatenate([x, flipped_x]), np.concatenate([y, flipped_y])
 
 
-def get_training_data(path: Path, side=None, shift=None):
-    training_data = read(path, side=side)
+def create_batch_generator(generator: Generator[TrainingData, None, None], n: int):
+    if n is None:
+        yield list(generator)
+    while True:
+        yield list(islice(generator, n))
+
+
+def create_validation_splitter(
+    data_generator: Generator[Any, None, None],
+    validation_split: float,
+):
+    queues = [deque(), deque()]
+
+    def fill_queues():
+        x = next(data_generator)
+        if random.random() > validation_split:
+            queues[0].append(x)
+        else:
+            queues[1].append(x)
+
+    def iter_from_queue(q):
+        while True:
+            while not q:
+                try:
+                    fill_queues()
+                except StopIteration:
+                    return
+            yield q.popleft()
+
+    return iter_from_queue(queues[0]), iter_from_queue(queues[1])
+
+
+def create_data_generator(
+    path: Path, batch_size: int = None, side: str = None, shift: float = None
+) -> Generator[Tuple[np.array, np.array], None, None]:
+    data_generator = read(path, side=side)
+    yield from create_array_generator(data_generator, batch_size, shift)
+
+
+def create_array_generator(
+    data_generator: Generator[TrainingData, None, None],
+    batch_size: int = None,
+    shift: float = None,
+) -> Generator[Tuple[np.array, np.array], None, None]:
     if isinstance(shift, float):
-        shift_non_center_angles(training_data, shift)
-    return add_horizontally_flipped(*convert(training_data))
+        data_generator = shift_non_center_angles(data_generator, shift)
+    data_generator = create_batch_generator(data_generator, batch_size)
+    while True:
+        x_train, y_train = convert(next(data_generator))
+        if len(x_train) > 0:
+            yield add_horizontally_flipped(x_train, y_train)
+        else:
+            raise StopIteration
+
+
+def create_validation_generators(
+    path: Path,
+    validation_split: float,
+    batch_size: int = None,
+    side: str = None,
+    shift: float = None,
+) -> Tuple[
+    Generator[Tuple[np.array, np.array], None, None],
+    Generator[Tuple[np.array, np.array], None, None],
+]:
+    data_generator = read(path, side=side)
+    trainer, validator = create_validation_splitter(data_generator, validation_split)
+    return (
+        create_array_generator(trainer, batch_size, shift),
+        create_array_generator(validator, batch_size, shift),
+    )

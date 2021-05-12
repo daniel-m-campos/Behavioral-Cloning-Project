@@ -1,3 +1,5 @@
+from typing import Tuple, Generator
+
 import numpy as np
 from tensorflow import keras
 from tensorflow.keras.layers import (
@@ -35,8 +37,16 @@ def create() -> keras.Model:
 
 
 def train(
-    x: np.array, y: np.array, epochs=10, validation_split=0.2, shuffle=True
+    train_data_generator: Generator[Tuple[np.array, np.array], None, None],
+    validation_data_generator: Generator[Tuple[np.array, np.array], None, None],
+    epochs=10,
+    shuffle=True,
 ) -> keras.Model:
     model = create()
-    model.fit(x, y, epochs=epochs, validation_split=validation_split, shuffle=shuffle)
+    model.fit(
+        x=train_data_generator,
+        validation_data=validation_data_generator,
+        epochs=epochs,
+        shuffle=shuffle,
+    )
     return model

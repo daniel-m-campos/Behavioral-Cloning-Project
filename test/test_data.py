@@ -25,7 +25,7 @@ def test_copy(old_path, resource_path, max_images):
 
 @pytest.fixture
 def training_data(resource_path):
-    return data.read(resource_path)
+    return list(data.read(resource_path))
 
 
 def test_read(training_data):
@@ -73,7 +73,7 @@ def test_get_timestamp():
 
 def test_shift_non_center_angles(training_data):
     shift = 0.5
-    data.shift_non_center_angles(training_data, shift)
+    training_data = data.shift_non_center_angles(training_data, shift)
     img_by_timestamp = defaultdict(dict)
     for x in training_data:
         img_by_timestamp[x.get_timestamp()][x.name] = x
@@ -83,3 +83,19 @@ def test_shift_non_center_angles(training_data):
         right_angle = timestamp_images[f"right_{timestamp}.jpg"].steering_angle
         assert left_angle == pytest.approx(center_angle + shift, 1e-6)
         assert right_angle == pytest.approx(center_angle - shift, 1e-6)
+
+
+def test_create_data_generator(resource_path):
+    data_generator = data.create_data_generator(resource_path, batch_size=6)
+    batches = [sample for sample in data_generator]
+    assert len(batches) == 6
+
+
+def test_create_test_train_splitter(resource_path):
+    trainer, validator = data.create_validation_generators(
+        resource_path, 0.5, batch_size=5
+    )
+    validation_data = list(validator)
+    train_data = list(trainer)
+    assert len(train_data) > 0
+    assert len(validation_data) > 0
