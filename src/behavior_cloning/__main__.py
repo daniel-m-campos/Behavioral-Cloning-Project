@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from tensorflow import keras
+
 import data
 from model import train
 
@@ -10,6 +12,11 @@ def main(path: Path):
     )
     model = train(trainer, validator, epochs=2)
     model.save(path / "model.h5")
+
+
+def plot_model(path: Path):
+    model = keras.models.load_model(path / "model.h5")
+    keras.utils.plot_model(model, to_file="../../img/model.png", show_shapes=True)
 
 
 if __name__ == "__main__":
