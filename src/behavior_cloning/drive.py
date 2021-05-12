@@ -56,14 +56,14 @@ def telemetry(sid, data):
         # The current speed of the car
         speed = data["speed"]
         # The current image from the center camera of the car
-        imgString = data["image"]
-        image = Image.open(BytesIO(base64.b64decode(imgString)))
+        img_string = data["image"]
+        image = Image.open(BytesIO(base64.b64decode(img_string)))
         image_array = np.asarray(image)
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
 
         throttle = controller.update(float(speed))
 
-        print(steering_angle, throttle)
+        print(f"steering_angle={steering_angle}, throttle={throttle}")
         send_control(steering_angle, throttle)
 
         # save frame
@@ -105,7 +105,8 @@ if __name__ == "__main__":
         type=str,
         nargs="?",
         default="",
-        help="Path to image folder. This is where the images from the run will be saved.",
+        help="Path to image folder. This is where the images from the run will be "
+        "saved.",
     )
     args = parser.parse_args()
 
