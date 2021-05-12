@@ -12,6 +12,11 @@ def resource_path() -> Path:
     return Path(__file__).parent / "resources"
 
 
+def test_create():
+    model = mdl.create()
+    print(model.summary())
+
+
 def test_train(resource_path):
     model = mdl.train(*data.convert(data.read(resource_path)), epochs=0)
     assert len(model.layers[-1].get_weights()) > 0
