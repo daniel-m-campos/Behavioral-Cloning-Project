@@ -98,7 +98,9 @@ def add_horizontally_flipped(x: np.array, y: np.array) -> Tuple[np.array, np.arr
     return np.concatenate([x, flipped_x]), np.concatenate([y, flipped_y])
 
 
-def create_batch_generator(generator: Generator[TrainingData, None, None], n: int):
+def create_batch_generator(
+    generator: Generator[TrainingData, None, None], n: int
+) -> Generator[List[TrainingData], None, None]:
     if n is None:
         yield list(generator)
     while True:
@@ -108,7 +110,7 @@ def create_batch_generator(generator: Generator[TrainingData, None, None], n: in
 def create_validation_splitter(
     data_generator: Generator[Any, None, None],
     validation_split: float,
-):
+) -> Tuple[Generator[Any, None, None], Generator[Any, None, None]]:
     queues = [deque(), deque()]
 
     def fill_queues():
