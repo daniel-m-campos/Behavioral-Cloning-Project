@@ -1,8 +1,6 @@
 from setuptools import setup, find_packages
 
 requirements_file = open("requirements.txt")
-test_requirements_file = open("test_requirements.txt")
-
 setup(
     name="behavior_cloning",
     description="Solutions for CarND Behavioral Cloning project",
