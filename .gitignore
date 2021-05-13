@@ -139,3 +139,6 @@ cython_debug/
 
 # Training data
 data*
+
+# Pycharm
+.idea
