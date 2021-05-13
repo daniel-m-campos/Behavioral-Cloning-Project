@@ -1,6 +1,7 @@
-from moviepy.editor import ImageSequenceClip
 import argparse
 import os
+
+from moviepy.editor import ImageSequenceClip
 
 IMAGE_EXT = ["jpeg", "gif", "png", "jpg"]
 
