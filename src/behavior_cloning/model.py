@@ -41,6 +41,8 @@ def train(
     validation_data_generator: Generator[Tuple[np.array, np.array], None, None],
     epochs=10,
     shuffle=True,
+    steps_per_epoch=None,
+    validation_steps=None,
 ) -> keras.Model:
     model = create()
     model.fit(
@@ -48,5 +50,7 @@ def train(
         validation_data=validation_data_generator,
         epochs=epochs,
         shuffle=shuffle,
+        steps_per_epoch=steps_per_epoch,
+        validation_steps=validation_steps,
     )
     return model
