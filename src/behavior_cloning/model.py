@@ -40,19 +40,28 @@ def create() -> keras.Model:
 
 def train(
     train_data_generator: Generator[Tuple[np.array, np.array], None, None],
-    validation_data_generator: Generator[Tuple[np.array, np.array], None, None],
-    epochs=10,
+    validation_data_generator: Generator[Tuple[np.array, np.array], None, None] = None,
+    epochs=1,
     shuffle=True,
     steps_per_epoch=None,
     validation_steps=None,
-) -> keras.Model:
+    validation_split=None,
+) -> Tuple[keras.Model, keras.callbacks.History]:
+    x, y = train_data_generator, None
+    if isinstance(validation_split, float):
+        x, y = next(train_data_generator)
+        validation_data_generator = None
+        steps_per_epoch = None
+        validation_steps = None
     model = create()
-    model.fit(
-        x=train_data_generator,
-        validation_data=validation_data_generator,
+    history = model.fit(
+        x=x,
+        y=y,
         epochs=epochs,
         shuffle=shuffle,
+        validation_split=validation_split,
+        validation_data=validation_data_generator,
         steps_per_epoch=steps_per_epoch,
         validation_steps=validation_steps,
     )
-    return model
+    return model, history
