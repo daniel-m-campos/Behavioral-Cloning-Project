@@ -4,13 +4,13 @@ import os
 import random
 import shutil
 from collections import deque
+from dataclasses import dataclass
 from itertools import islice
 from pathlib import Path
-from typing import Tuple, Generator, List, Any
+from typing import Any, Generator, List, Tuple
 
 import cv2
 import numpy as np
-from dataclasses import dataclass
 
 
 def copy(

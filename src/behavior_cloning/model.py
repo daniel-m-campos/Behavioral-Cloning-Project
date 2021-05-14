@@ -1,15 +1,14 @@
-from typing import Tuple, Generator
+from typing import Generator, Tuple
 
 import numpy as np
 from tensorflow import keras
 from tensorflow.keras.layers import (
-    Dropout,
-    Flatten,
-    Lambda,
-    Dense,
-    Cropping2D,
     Convolution2D,
+    Cropping2D,
+    Dense,
+    Flatten,
     Input,
+    Lambda,
 )
 from tensorflow.keras.models import Sequential
 

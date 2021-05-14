@@ -9,10 +9,10 @@ import eventlet.wsgi
 import h5py
 import numpy as np
 import socketio
-from PIL import Image
 from flask import Flask
 from keras import __version__ as keras_version
 from keras.models import load_model
+from PIL import Image
 
 sio = socketio.Server()
 app = Flask(__name__)
