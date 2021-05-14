@@ -1,3 +1,4 @@
+import argparse
 import itertools
 import math
 import os
@@ -60,4 +61,12 @@ def main(
 
 
 if __name__ == "__main__":
-    main(Path("../../data/track1"), epochs=5, validation_split=0.3, batch_size=None)
+    parser = argparse.ArgumentParser(description="Model Training")
+    parser.add_argument(
+        "path",
+        type=str,
+        help="Path to simulator training data. IMG directory and driving_log.csv "
+        "should be present.",
+    )
+    args = parser.parse_args()
+    main(Path(args.path), epochs=5, validation_split=0.3, batch_size=None)
