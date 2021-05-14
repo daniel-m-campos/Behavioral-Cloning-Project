@@ -53,10 +53,16 @@ def test_add_horizontally_flipped(training_data):
     assert new_y[-1] == -y[-1]
     try:
         import matplotlib.pyplot as plt
+        import cv2
 
         fig, axes = plt.subplots(2, 1)
-        axes[0].imshow(x[0])
-        axes[1].imshow(new_x[x.shape[0]])
+        bgr2rgb = lambda img: cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        axes[0].imshow(bgr2rgb(x[0]))
+        axes[0].set_title("Original")
+        axes[1].imshow(bgr2rgb(new_x[x.shape[0]]))
+        axes[1].set_title("Horizontally Flipped")
+        for ax in axes:
+            ax.axis("off")
         plt.show()
     except ImportError:
         pass
