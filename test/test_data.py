@@ -1,4 +1,3 @@
-import os
 from collections import defaultdict
 from pathlib import Path
 
@@ -7,12 +6,10 @@ import pytest
 
 from behavior_cloning import data
 
-RESOURCE_PATH = path = f"{os.path.dirname(__file__)}/resources"
-
 
 @pytest.fixture
 def resource_path():
-    return Path(RESOURCE_PATH)
+    return Path(__file__).parent / "resources"
 
 
 @pytest.mark.skip
