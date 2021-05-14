@@ -25,6 +25,7 @@ dependencies:
         - keras
         - moviepy
         - opencv-python
+        - graphviz
         - requests
         - dataclasses
         - pytest
