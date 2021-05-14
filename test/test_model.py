@@ -19,9 +19,12 @@ def test_create():
 
 def test_train(resource_path):
     data_generator = data.create_data_generator(resource_path)
-    trainer, validator = data.create_validation_splitter(data_generator, 0.2)
-    model = mdl.train(trainer, validator, epochs=0)
+    model, history = mdl.train(
+        data_generator,
+        epochs=1,
+    )
     assert len(model.layers[-1].get_weights()) > 0
+    assert len(history.history["loss"]) > 0
 
 
 def test_predict(resource_path):
