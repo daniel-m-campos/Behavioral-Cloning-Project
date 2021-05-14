@@ -28,7 +28,6 @@ def create() -> keras.Model:
     model.add(Convolution2D(48, 5, 2, activation="relu"))
     model.add(Convolution2D(64, 3, 1, activation="relu"))
     model.add(Convolution2D(64, 3, 1, activation="relu"))
-    model.add(Dropout(0.2))
     model.add(Flatten())
     model.add(Dense(100))
     model.add(Dense(50))
