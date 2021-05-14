@@ -60,4 +60,4 @@ def main(
 
 
 if __name__ == "__main__":
-    main(Path("../../data/track1"), epochs=5, validation_split=0.2, batch_size=None)
+    main(Path("../../data/track1"), epochs=5, validation_split=0.3, batch_size=None)
